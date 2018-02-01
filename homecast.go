@@ -18,6 +18,7 @@ const (
 
 // CastDevice is cast-able device contains cast client
 type CastDevice struct {
+	*mdns.ServiceEntry
 	client *cast.Client
 }
 
@@ -59,13 +60,11 @@ func LookupGoogleHome() []*CastDevice {
 	results := make([]*CastDevice, 0, 4)
 	go func() {
 		for entry := range entriesCh {
-			log.Printf("[INFO] ServiceEntry detected: [%s]%s", entry.AddrV4, entry.Name)
+			log.Printf("[INFO] ServiceEntry detected: [%s:%d]%s", entry.AddrV4, entry.Port, entry.Name)
 			for _, field := range entry.InfoFields {
 				if field == googleHomeModelInfo {
 					client := cast.NewClient(entry.AddrV4, entry.Port)
-					results = append(results, &CastDevice{
-						client: client,
-					})
+					results = append(results, &CastDevice{entry, client})
 				}
 			}
 		}
