@@ -17,7 +17,7 @@ devices := homecast.LookupGoogleHome()
 
 ctx := context.Background()
 for _, device := range devices {
-    err = device.Speak(ctx, "Hello World", "en")
+    err := device.Speak(ctx, "Hello World", "en")
 }
 ```
 
