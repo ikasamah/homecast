@@ -13,6 +13,9 @@ func main() {
 	ctx := context.Background()
 	for _, device := range devices {
 		fmt.Printf("Device: [%s:%d]%s", device.AddrV4, device.Port, device.Name)
-		_ = device.Speak(ctx, "Hello World", "en")
+
+		if err := device.Speak(ctx, "Hello World", "en"); err != nil {
+			fmt.Printf("Failed to speak: %v", err)
+		}
 	}
 }

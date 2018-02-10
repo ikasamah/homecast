@@ -8,6 +8,7 @@ import (
 
 	"github.com/barnybug/go-cast"
 	"github.com/barnybug/go-cast/controllers"
+	castnet "github.com/barnybug/go-cast/net"
 	"github.com/hashicorp/mdns"
 )
 
@@ -38,10 +39,27 @@ func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
 	}
 	defer g.client.Close()
 
-	media, err := g.client.Media(ctx)
+	conn := castnet.NewConnection()
+	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	status, err := g.client.Receiver().LaunchApp(ctx, cast.AppMedia)
 	if err != nil {
 		return err
 	}
+	app := status.GetSessionByAppId(cast.AppMedia)
+
+	cc := controllers.NewConnectionController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
+	if err := cc.Start(ctx); err != nil {
+		return err
+	}
+	media := controllers.NewMediaController(conn, g.client.Events, cast.DefaultSender, *app.TransportId)
+	if err := media.Start(ctx); err != nil {
+		return err
+	}
+
 	mediaItem := controllers.MediaItem{
 		ContentId:   url.String(),
 		ContentType: "audio/mp3",
@@ -50,6 +68,7 @@ func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
 
 	log.Printf("[INFO] Load media: content_id=%s", mediaItem.ContentId)
 	_, err = media.LoadMedia(ctx, mediaItem, 0, true, nil)
+
 	return err
 }
 
