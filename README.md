@@ -27,5 +27,15 @@ $ dep ensure
 $ go run example/main.go
 ```
 
+
+## Server erxample
+```bash
+$ go run example/server.go 
+```
+Then, access following URL in your browser.
+
+http://localhost:8080/?text=Ciao&lang=it 
+
+
 ## Author
 [Masayuki Hamasaki](https://github.com/ikasamah)
