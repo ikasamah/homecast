@@ -23,6 +23,16 @@ type CastDevice struct {
 	client *cast.Client
 }
 
+// Connect connects required services to cast
+func (g *CastDevice) Connect(ctx context.Context) error {
+	return g.client.Connect(ctx)
+}
+
+// Close calls client's close func
+func (g *CastDevice) Close() {
+	g.client.Close()
+}
+
 // Speak speaks given text on cast device
 func (g *CastDevice) Speak(ctx context.Context, text, lang string) error {
 	url, err := tts(text, lang)
@@ -34,11 +44,6 @@ func (g *CastDevice) Speak(ctx context.Context, text, lang string) error {
 
 // Play plays media contents on cast device
 func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
-	if err := g.client.Connect(ctx); err != nil {
-		return err
-	}
-	defer g.client.Close()
-
 	conn := castnet.NewConnection()
 	if err := conn.Connect(ctx, g.AddrV4, g.Port); err != nil {
 		return err
@@ -72,8 +77,8 @@ func (g *CastDevice) Play(ctx context.Context, url *url.URL) error {
 	return err
 }
 
-// LookupGoogleHome retrieves cast-able google home devices
-func LookupGoogleHome() []*CastDevice {
+// LookupAndConnect retrieves cast-able google home devices
+func LookupAndConnect(ctx context.Context) []*CastDevice {
 	entriesCh := make(chan *mdns.ServiceEntry, 4)
 
 	results := make([]*CastDevice, 0, 4)
@@ -83,6 +88,10 @@ func LookupGoogleHome() []*CastDevice {
 			for _, field := range entry.InfoFields {
 				if field == googleHomeModelInfo {
 					client := cast.NewClient(entry.AddrV4, entry.Port)
+					if err := client.Connect(ctx); err != nil {
+						log.Printf("[ERROR] Failed to connect: %s", err)
+						continue
+					}
 					results = append(results, &CastDevice{entry, client})
 				}
 			}

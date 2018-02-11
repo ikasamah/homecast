@@ -15,7 +15,13 @@ func main() {
 	defaultLang := flag.String("lang", "en", "Default language to speak")
 	flag.Parse()
 
-	devices := homecast.LookupGoogleHome()
+	ctx := context.Background()
+	devices := homecast.LookupAndConnect(ctx)
+	defer func() {
+		for _, device := range devices {
+			device.Close()
+		}
+	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		text := r.FormValue("text")
@@ -31,7 +37,6 @@ func main() {
 			lang = *defaultLang
 		}
 
-		ctx := context.Background()
 		for _, device := range devices {
 			if err := device.Speak(ctx, text, lang); err != nil {
 				log.Printf("[ERROR] Failed to speak: %v", err)
