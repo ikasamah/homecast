@@ -8,7 +8,7 @@ This is Go version of [noelportugal/google-home-notifier](https://github.com/noe
 
 ## Install
 ```bash
-$ go get github.com/ikasamah/homecast
+$ go get -u github.com/ikasamah/homecast
 ```
 
 ## Usage
@@ -23,14 +23,13 @@ for _, device := range devices {
 
 ## Run example
 ```bash
-$ dep ensure
-$ go run example/main.go
+$ go run $GOPATH/src/github.com/ikasamah/homecast/example/main.go
 ```
 
 
 ## Server erxample
 ```bash
-$ go run example/server.go 
+$ go run $GOPATH/src/github.com/ikasamah/homecast/example/server.go
 ```
 Then, access following URL in your browser.
 
