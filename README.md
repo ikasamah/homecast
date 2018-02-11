@@ -13,9 +13,9 @@ $ go get github.com/ikasamah/homecast
 
 ## Usage
 ```golang
-devices := homecast.LookupGoogleHome()
-
 ctx := context.Background()
+devices := homecast.LookupAndConnect(ctx)
+
 for _, device := range devices {
     err := device.Speak(ctx, "Hello World", "en")
 }
