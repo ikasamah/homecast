@@ -26,13 +26,13 @@
 
 
 [[constraint]]
-  name = "github.com/barnybug/go-cast"
-  version = "0.0.5"
-
-[[constraint]]
   branch = "master"
   name = "github.com/hashicorp/mdns"
 
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/barnybug/go-cast"
