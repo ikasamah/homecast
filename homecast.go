@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 
 	"github.com/barnybug/go-cast"
 	"github.com/barnybug/go-cast/controllers"
@@ -86,7 +87,7 @@ func LookupAndConnect(ctx context.Context) []*CastDevice {
 		for entry := range entriesCh {
 			log.Printf("[INFO] ServiceEntry detected: [%s:%d]%s", entry.AddrV4, entry.Port, entry.Name)
 			for _, field := range entry.InfoFields {
-				if field == googleHomeModelInfo {
+				if strings.HasPrefix(field, googleHomeModelInfo) {
 					client := cast.NewClient(entry.AddrV4, entry.Port)
 					if err := client.Connect(ctx); err != nil {
 						log.Printf("[ERROR] Failed to connect: %s", err)
