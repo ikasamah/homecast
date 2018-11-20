@@ -10,7 +10,7 @@ import (
 	"github.com/barnybug/go-cast"
 	"github.com/barnybug/go-cast/controllers"
 	castnet "github.com/barnybug/go-cast/net"
-	"github.com/hashicorp/mdns"
+	"github.com/micro/mdns"
 )
 
 const (
